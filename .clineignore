@@ -1,0 +1,11 @@
+# File yang tidak boleh dibaca atau diubah Cline sembarangan.
+# Terutama rahasia dan data pribadi. Lihat AGENTS.md Bab 5.
+.env
+.env.*
+*.key
+*.pem
+storage/*.key
+/vendor/
+node_modules/
+
+Setelah kedua file itu ada di folder proyek, jalankan lagi perintah berikut di terminal yang sama, lalu kirim hasilnya:
