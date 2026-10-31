@@ -20,4 +20,12 @@ class AppSetting extends Model
             'locked_until' => 'datetime',
         ];
     }
+
+    /**
+     * Ambil baris pengaturan tunggal, buat bila belum ada.
+     */
+    public static function current(): self
+    {
+        return static::query()->firstOrCreate([]);
+    }
 }
