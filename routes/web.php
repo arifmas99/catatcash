@@ -2,12 +2,21 @@
 
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PinController;
+use App\Http\Controllers\WalletController;
 use Illuminate\Support\Facades\Route;
 
 // Beranda (butuh PIN terbuka).
 Route::get('/', [DashboardController::class, 'index'])
     ->middleware('pin.unlocked')
     ->name('dashboard.index');
+
+// Dompet (butuh PIN terbuka).
+Route::middleware('pin.unlocked')->group(function () {
+    Route::get('/wallets', [WalletController::class, 'index'])->name('wallets.index');
+    Route::post('/wallets', [WalletController::class, 'store'])->name('wallets.store');
+    Route::put('/wallets/{wallet}', [WalletController::class, 'update'])->name('wallets.update');
+    Route::delete('/wallets/{wallet}', [WalletController::class, 'destroy'])->name('wallets.destroy');
+});
 
 // Hanya aktif selama PIN belum dibuat.
 Route::get('/pin/setup', [PinController::class, 'showSetupForm'])->name('pin.setup');
