@@ -3,30 +3,17 @@
 @section('title', 'Buat PIN')
 
 @section('content')
-    <div class="pin-header">
-        <h1>Buat PIN CatatCash</h1>
-        <p>Buat PIN 6 digit untuk mengunci aplikasi.</p>
-    </div>
-    <div class="pin-card">
+    <x-pin-keypad
+        :form-action="route('pin.setup.store')"
+        title="Buat PIN CatatCash"
+        subtitle="PIN 6 digit untuk mengunci aplikasi."
+        mode="confirm">
         @if ($errors->any())
-            <div class="alert">{{ $errors->first() }}</div>
+            <div class="mb-4 rounded-xl border border-expense/30 bg-expense-soft px-4 py-3 text-sm text-red-800">
+                {{ $errors->first() }}
+            </div>
         @endif
 
-        <form method="POST" action="{{ route('pin.setup.store') }}" autocomplete="off">
-            @csrf
-            <div class="field">
-                <label for="pin">PIN Baru (6 digit)</label>
-                <input id="pin" name="pin" type="password" inputmode="numeric" pattern="\d{6}"
-                       maxlength="6" required autofocus>
-            </div>
-            <div class="field">
-                <label for="pin_confirmation">Konfirmasi PIN</label>
-                <input id="pin_confirmation" name="pin_confirmation" type="password" inputmode="numeric"
-                       pattern="\d{6}" maxlength="6" required>
-            </div>
-            <button type="submit" class="btn-primary">Simpan PIN</button>
-        </form>
-
-        <p class="help">PIN disimpan dalam bentuk hash, tidak pernah sebagai angka polos.</p>
-    </div>
+        <p class="mt-4 text-center text-xs text-subtle">PIN disimpan dalam bentuk hash, tidak pernah sebagai angka polos.</p>
+    </x-pin-keypad>
 @endsection
