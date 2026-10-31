@@ -1,13 +1,13 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PinController;
 use Illuminate\Support\Facades\Route;
 
-// Pintu masuk aplikasi. Sementara menampilkan layar "terbuka" sampai
-// halaman Beranda dibuat pada tugas berikutnya.
-Route::view('/', 'pages.unlocked')
+// Beranda (butuh PIN terbuka).
+Route::get('/', [DashboardController::class, 'index'])
     ->middleware('pin.unlocked')
-    ->name('home');
+    ->name('dashboard.index');
 
 // Hanya aktif selama PIN belum dibuat.
 Route::get('/pin/setup', [PinController::class, 'showSetupForm'])->name('pin.setup');

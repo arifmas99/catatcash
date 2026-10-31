@@ -41,7 +41,7 @@ class PinController extends Controller
         $request->session()->regenerate();
         $request->session()->put('pin_unlocked_at', time());
 
-        return redirect()->route('home');
+        return redirect()->route('dashboard.index');
     }
 
     /**
@@ -52,7 +52,7 @@ class PinController extends Controller
         $unlockedAt = (int) $request->session()->get('pin_unlocked_at', 0);
 
         if ($this->pin->isSessionUnlocked($unlockedAt)) {
-            return redirect()->route('home');
+            return redirect()->route('dashboard.index');
         }
 
         return view('pages.pin.unlock', [
@@ -71,7 +71,7 @@ class PinController extends Controller
             $request->session()->regenerate();
             $request->session()->put('pin_unlocked_at', time());
 
-            return redirect()->intended(route('home'));
+            return redirect()->intended(route('dashboard.index'));
         }
 
         if ($result['status'] === 'locked') {
