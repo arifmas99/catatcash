@@ -3,6 +3,7 @@
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PinController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\WalletController;
 use Illuminate\Support\Facades\Route;
@@ -37,6 +38,11 @@ Route::middleware('pin.unlocked')->group(function () {
     Route::put('/transactions/{transaction}', [TransactionController::class, 'update'])->name('transactions.update');
     Route::delete('/transactions/{transaction}', [TransactionController::class, 'destroy'])->name('transactions.destroy');
 });
+
+// Laporan (butuh PIN terbuka).
+Route::get('/reports', [ReportController::class, 'index'])
+    ->middleware('pin.unlocked')
+    ->name('reports.index');
 
 // Hanya aktif selama PIN belum dibuat.
 Route::get('/pin/setup', [PinController::class, 'showSetupForm'])->name('pin.setup');
