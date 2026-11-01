@@ -10,16 +10,39 @@ Data pada tangkapan layar di bawah ini adalah data contoh.
 ### Desktop
 
 #### PIN
+
+![PIN versi desktop](docs/screenshots/pin-pc.png)
+
 #### Beranda
+
+![Beranda versi desktop](docs/screenshots/beranda-pc.png)
+
 #### Transaksi
+
+![Transaksi versi desktop](docs/screenshots/transaksi-pc.png)
+
 #### Catat Transaksi
+
+![Catat Transaksi versi desktop](docs/screenshots/catat-transaksi-pc.png)
+
 #### Dompet
+
+![Dompet versi desktop](docs/screenshots/dompet-pc.png)
+
 #### Laporan
+
+![Laporan versi desktop](docs/screenshots/laporan-pc.png)
+
 ### Mobile
-PIN | Beranda | Transaksi
-<img src="docs/screenshots/pin-hp.png" width="280" alt="PIN versi mobile"> | <img src="docs/screenshots/beranda-hp.png" width="280" alt="Beranda versi mobile"> | <img src="docs/screenshots/transaksi-hp.png" width="280" alt="Transaksi versi mobile">
-Catat Transaksi | Dompet | Laporan
-<img src="docs/screenshots/catat-transaksi-hp.png" width="280" alt="Catat Transaksi versi mobile"> | <img src="docs/screenshots/dompet-hp.png" width="280" alt="Dompet versi mobile"> | <img src="docs/screenshots/laporan-hp.png" width="280" alt="Laporan versi mobile">
+
+| PIN | Beranda | Transaksi |
+| --- | --- | --- |
+| <img src="docs/screenshots/pin-hp.png" width="280" alt="PIN versi mobile"> | <img src="docs/screenshots/beranda-hp.png" width="280" alt="Beranda versi mobile"> | <img src="docs/screenshots/transaksi-hp.png" width="280" alt="Transaksi versi mobile"> |
+
+| Catat Transaksi | Dompet | Laporan |
+| --- | --- | --- |
+| <img src="docs/screenshots/catat-transaksi-hp.png" width="280" alt="Catat Transaksi versi mobile"> | <img src="docs/screenshots/dompet-hp.png" width="280" alt="Dompet versi mobile"> | <img src="docs/screenshots/laporan-hp.png" width="280" alt="Laporan versi mobile"> |
+
 ## Status v1
 
 Seluruh tugas v1 (Tugas 1–11 di `TASKS.md`) selesai dan diuji:
