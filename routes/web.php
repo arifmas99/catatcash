@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PinController;
 use App\Http\Controllers\WalletController;
@@ -16,6 +17,14 @@ Route::middleware('pin.unlocked')->group(function () {
     Route::post('/wallets', [WalletController::class, 'store'])->name('wallets.store');
     Route::put('/wallets/{wallet}', [WalletController::class, 'update'])->name('wallets.update');
     Route::delete('/wallets/{wallet}', [WalletController::class, 'destroy'])->name('wallets.destroy');
+});
+
+// Kategori (butuh PIN terbuka).
+Route::middleware('pin.unlocked')->group(function () {
+    Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
+    Route::post('/categories', [CategoryController::class, 'store'])->name('categories.store');
+    Route::put('/categories/{category}', [CategoryController::class, 'update'])->name('categories.update');
+    Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
 });
 
 // Hanya aktif selama PIN belum dibuat.

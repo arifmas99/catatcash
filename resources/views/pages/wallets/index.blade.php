@@ -4,14 +4,21 @@
 
 @section('content')
     <div class="space-y-5">
-        <div class="flex items-center gap-2">
-            <span class="grid h-9 w-9 place-items-center rounded-xl bg-primary/10 text-primary">
-                <x-icon name="wallet" size="h-5 w-5" />
-            </span>
-            <div>
-                <h1 class="text-lg font-semibold text-ink">Kelola Dompet</h1>
-                <p class="text-xs text-subtle">Tambah, ubah nama, atau hapus dompet.</p>
+        <div class="flex items-center justify-between gap-3">
+            <div class="flex items-center gap-2">
+                <span class="grid h-9 w-9 place-items-center rounded-xl bg-primary/10 text-primary">
+                    <x-icon name="wallet" size="h-5 w-5" />
+                </span>
+                <div>
+                    <h1 class="text-lg font-semibold text-ink">Kelola Dompet</h1>
+                    <p class="text-xs text-subtle">Tambah, ubah nama, atau hapus dompet.</p>
+                </div>
             </div>
+            <a href="{{ route('categories.index') }}"
+               class="inline-flex shrink-0 items-center gap-1.5 rounded-xl border border-line px-3 py-2 text-xs font-medium text-subtle transition hover:bg-muted hover:text-primary active:scale-95">
+                <x-icon name="tag" size="h-4 w-4" />
+                Kategori
+            </a>
         </div>
 
         @if (session('status'))
