@@ -3,6 +3,24 @@
 Aplikasi web pencatat keuangan pribadi, single-user, self-hosted. Berjalan penuh
 secara lokal (MySQL/MariaDB) tanpa layanan pihak ketiga.
 
+## Tampilan Aplikasi
+
+Data pada tangkapan layar di bawah ini adalah data contoh.
+
+### Desktop
+
+#### PIN
+#### Beranda
+#### Transaksi
+#### Catat Transaksi
+#### Dompet
+#### Laporan
+### Mobile
+PIN | Beranda | Transaksi
+<img src="docs/screenshots/pin-hp.png" width="280" alt="PIN versi mobile"> | <img src="docs/screenshots/beranda-hp.png" width="280" alt="Beranda versi mobile"> | <img src="docs/screenshots/transaksi-hp.png" width="280" alt="Transaksi versi mobile">
+Catat Transaksi | Dompet | Laporan
+<img src="docs/screenshots/catat-transaksi-hp.png" width="280" alt="Catat Transaksi versi mobile"> | <img src="docs/screenshots/dompet-hp.png" width="280" alt="Dompet versi mobile"> | <img src="docs/screenshots/laporan-hp.png" width="280" alt="Laporan versi mobile">
+
 ## Status v1
 
 Seluruh tugas v1 (Tugas 1–11 di `TASKS.md`) selesai dan diuji:
