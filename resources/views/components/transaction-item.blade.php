@@ -1,10 +1,14 @@
 @props(['transaction'])
 
 @php
+    $category = $transaction->category;
     $isIncome = $transaction->type === \App\Enums\TransactionType::Income;
     $amount = (int) $transaction->amount;
     $date = $transaction->transaction_date;
     $time = $transaction->transaction_time;
+    $icon = $category
+        ? \App\Support\CategoryIconResolver::resolve($category->name, $category->type)
+        : ($isIncome ? 'arrow-up' : 'arrow-down');
     $editUrl = \Illuminate\Support\Facades\Route::has('transactions.edit')
         ? route('transactions.edit', $transaction)
         : '#';
@@ -12,7 +16,7 @@
 
 <div class="flex items-start gap-3 rounded-2xl border border-line bg-surface p-3 shadow-sm">
     <span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl {{ $isIncome ? 'bg-income-soft text-income' : 'bg-expense-soft text-expense' }}">
-        <x-icon :name="$isIncome ? 'arrow-up' : 'arrow-down'" size="h-5 w-5" />
+        <x-icon :name="$icon" size="h-5 w-5" />
     </span>
 
     <div class="min-w-0 flex-1">
@@ -37,11 +41,16 @@
                class="grid h-7 w-7 place-items-center rounded-lg text-subtle transition hover:bg-muted hover:text-primary active:scale-90">
                 <x-icon name="edit" size="h-4 w-4" />
             </a>
-            <button type="button"
-                    aria-label="Hapus transaksi"
-                    class="grid h-7 w-7 place-items-center rounded-lg text-subtle transition hover:bg-expense-soft hover:text-expense active:scale-90">
-                <x-icon name="trash" size="h-4 w-4" />
-            </button>
+            <form method="POST" action="{{ route('transactions.destroy', $transaction) }}"
+                  onsubmit="return confirm('Hapus transaksi ini?')">
+                @csrf
+                @method('DELETE')
+                <button type="submit"
+                        aria-label="Hapus transaksi"
+                        class="grid h-7 w-7 place-items-center rounded-lg text-subtle transition hover:bg-expense-soft hover:text-expense active:scale-90">
+                    <x-icon name="trash" size="h-4 w-4" />
+                </button>
+            </form>
         </div>
     </div>
 </div>
