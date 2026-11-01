@@ -49,6 +49,7 @@ class ReportController extends Controller
         return view('pages.reports.index', [
             'filters' => $filters,
             'summary' => $this->report->summary($filters),
+            'chart' => $this->report->chartSeries($filters),
             'transactions' => $this->report->transactions($filters),
             'periodLabel' => $this->periodLabel($filters),
             'wallets' => Wallet::query()->orderByDesc('is_primary')->orderBy('name')->get(),

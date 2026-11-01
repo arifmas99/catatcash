@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\TransactionType;
 use App\Models\Transaction;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
@@ -125,5 +126,155 @@ class ReportAggregatorService
             'start' => CarbonImmutable::parse($start)->startOfDay(),
             'end' => CarbonImmutable::parse($end)->endOfDay(),
         ];
+    }
+
+    /**
+     * Deret grafik Tren Alur Kas memakai filter yang sama dengan ringkasan.
+     *
+     * @param  array<string, mixed>  $filters
+     * @return array{labels: array<int, string>, income: array<int, int>, expense: array<int, int>, count: int, grouping: string, auto_type: string}
+     */
+    public function chartSeries(array $filters): array
+    {
+        $period = $filters['period'] ?? 'monthly';
+        [$grouping, $buckets] = $this->bucketPlan($period, $this->resolveRange($filters));
+
+        $series = [
+            'income' => array_fill(0, count($buckets), 0),
+            'expense' => array_fill(0, count($buckets), 0),
+        ];
+
+        $rows = $this->baseQuery($filters)->get(['transaction_date', 'type', 'amount']);
+
+        foreach ($rows as $row) {
+            $index = $this->bucketIndex($buckets, CarbonImmutable::parse($row->transaction_date)->startOfDay());
+
+            if ($index === null) {
+                continue;
+            }
+
+            $series[$row->type === TransactionType::Income ? 'income' : 'expense'][$index] += (int) $row->amount;
+        }
+
+        return [
+            'labels' => array_map(fn (array $bucket): string => $bucket['label'], $buckets),
+            'income' => $series['income'],
+            'expense' => $series['expense'],
+            'count' => $rows->count(),
+            'grouping' => $grouping,
+            'auto_type' => $this->autoChartType($period, $grouping),
+        ];
+    }
+
+    /**
+     * Rencana ember sumbu X: [granularitas, daftar ember].
+     *
+     * @param  array{start: CarbonImmutable, end: CarbonImmutable}  $range
+     * @return array{0: string, 1: array<int, array{start: CarbonImmutable, end: CarbonImmutable, label: string}>}
+     */
+    private function bucketPlan(string $period, array $range): array
+    {
+        return match ($period) {
+            'daily' => ['daily', $this->dayBuckets($range['start'], $range['end'], 'd/m/Y')],
+            'weekly' => ['daily', $this->dayBuckets($range['start'], $range['end'], 'd/m')],
+            'monthly' => ['daily', $this->dayBuckets($range['start'], $range['end'], 'j')],
+            default => $this->customPlan($range['start'], $range['end']),
+        };
+    }
+
+    /**
+     * Aturan pengelompokan Custom: <=31 hari per hari, 32-180 hari per minggu, >180 hari per bulan.
+     *
+     * @return array{0: string, 1: array<int, array{start: CarbonImmutable, end: CarbonImmutable, label: string}>}
+     */
+    private function customPlan(CarbonImmutable $start, CarbonImmutable $end): array
+    {
+        $days = (int) $start->diffInDays($end) + 1;
+
+        if ($days <= 31) {
+            return ['daily', $this->dayBuckets($start, $end, 'd/m')];
+        }
+
+        if ($days <= 180) {
+            return ['weekly', $this->weekBuckets($start, $end)];
+        }
+
+        return ['monthly', $this->monthBuckets($start, $end)];
+    }
+
+    /**
+     * @return array<int, array{start: CarbonImmutable, end: CarbonImmutable, label: string}>
+     */
+    private function dayBuckets(CarbonImmutable $start, CarbonImmutable $end, string $format): array
+    {
+        $buckets = [];
+        $cursor = $start->startOfDay();
+
+        while ($cursor->lessThanOrEqualTo($end)) {
+            $buckets[] = ['start' => $cursor->startOfDay(), 'end' => $cursor->endOfDay(), 'label' => $cursor->format($format)];
+            $cursor = $cursor->addDay();
+        }
+
+        return $buckets;
+    }
+
+    /**
+     * @return array<int, array{start: CarbonImmutable, end: CarbonImmutable, label: string}>
+     */
+    private function weekBuckets(CarbonImmutable $start, CarbonImmutable $end): array
+    {
+        $buckets = [];
+        $cursor = $start->startOfWeek(CarbonInterface::MONDAY);
+
+        while ($cursor->lessThanOrEqualTo($end)) {
+            $buckets[] = ['start' => $cursor->startOfDay(), 'end' => $cursor->addDays(6)->endOfDay(), 'label' => $cursor->format('d/m')];
+            $cursor = $cursor->addWeek();
+        }
+
+        return $buckets;
+    }
+
+    /**
+     * @return array<int, array{start: CarbonImmutable, end: CarbonImmutable, label: string}>
+     */
+    private function monthBuckets(CarbonImmutable $start, CarbonImmutable $end): array
+    {
+        $names = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+        $buckets = [];
+        $cursor = $start->startOfMonth();
+
+        while ($cursor->lessThanOrEqualTo($end)) {
+            $buckets[] = ['start' => $cursor->startOfDay(), 'end' => $cursor->endOfMonth()->endOfDay(), 'label' => $names[(int) $cursor->month].' '.$cursor->year];
+            $cursor = $cursor->addMonth();
+        }
+
+        return $buckets;
+    }
+
+    /**
+     * @param  array<int, array{start: CarbonImmutable, end: CarbonImmutable, label: string}>  $buckets
+     */
+    private function bucketIndex(array $buckets, CarbonImmutable $date): ?int
+    {
+        foreach ($buckets as $index => $bucket) {
+            if ($date->greaterThanOrEqualTo($bucket['start']) && $date->lessThanOrEqualTo($bucket['end'])) {
+                return $index;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Jenis grafik "Otomatis": Batang untuk Harian/Mingguan, Garis untuk Bulanan,
+     * dan untuk Custom mengikuti pengelompokannya.
+     */
+    private function autoChartType(string $period, string $grouping): string
+    {
+        return match ($period) {
+            'daily', 'weekly' => 'bar',
+            'monthly' => 'line',
+            default => in_array($grouping, ['daily', 'weekly'], true) ? 'bar' : 'line',
+        };
     }
 }

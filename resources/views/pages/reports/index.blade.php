@@ -113,6 +113,38 @@
             </div>
         </div>
 
+        {{-- Grafik Tren Alur Kas --}}
+        <section class="rounded-2xl border border-line bg-surface p-4 shadow-sm">
+            <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
+                <h2 class="flex items-center gap-2 text-sm font-semibold text-ink">
+                    <x-icon name="chart" size="h-4 w-4" class="text-primary" />
+                    Grafik Tren Alur Kas
+                </h2>
+                @if ($chart['count'] > 0)
+                    <div class="flex items-center gap-1.5">
+                        <button type="button" data-chart-type="auto"
+                                class="rounded-lg bg-primary px-2.5 py-1.5 text-xs font-semibold text-white transition active:scale-95">Otomatis</button>
+                        <button type="button" data-chart-type="line"
+                                class="rounded-lg border border-line px-2.5 py-1.5 text-xs font-medium text-subtle transition hover:bg-muted active:scale-95">Garis</button>
+                        <button type="button" data-chart-type="bar"
+                                class="rounded-lg border border-line px-2.5 py-1.5 text-xs font-medium text-subtle transition hover:bg-muted active:scale-95">Batang</button>
+                    </div>
+                @endif
+            </div>
+
+            @if ($chart['count'] === 0)
+                <x-empty-state
+                    title="Belum Ada Data"
+                    message="Belum ada data transaksi pada periode dan filter yang dipilih." />
+            @else
+                <div class="h-72 w-full">
+                    <canvas id="cashflow-chart"></canvas>
+                </div>
+                <script type="application/json" id="cashflow-data">@json($chart)</script>
+                @vite('resources/js/cashflow-chart.js')
+            @endif
+        </section>
+
         @if ($transactions->isEmpty())
             <x-empty-state
                 title="Belum Ada Data"
